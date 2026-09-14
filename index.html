@@ -2,29 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SaturnBeat</title>
 
-  <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#0d0f17">
+  <!-- Meta Tags PWA (Comportamiento de app nativa/APK) -->
+  <meta name="theme-color" content="#ff0055">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="SaturnBeat">
-  
-  <!-- Manifest Inline (Data URI) -->
-  <link rel="manifest" href='data:application/json,{"name":"SaturnBeat","short_name":"SaturnBeat","start_url":".","display":"standalone","background_color":"#0d0f17","theme_color":"#0d0f17","icons":[{"src":"https://img.icons8.com/neon/192/spider.png","sizes":"192x192","type":"image/png"},{"src":"https://img.icons8.com/neon/512/spider.png","sizes":"512x512","type":"image/png"}]}'>
+  <link rel="apple-touch-icon" href="https://img.icons8.com/neon/512/spider.png">
 
-  <!-- Fuentes e Iconos -->
+  <!-- Web App Manifest Inline -->
+  <link rel="manifest" href='data:application/json,{"name":"SaturnBeat","short_name":"SaturnBeat","start_url":".","display":"standalone","orientation":"portrait","background_color":"#0b0c10","theme_color":"#ff0055","icons":[{"src":"https://img.icons8.com/neon/192/spider.png","sizes":"192x192","type":"image/png"},{"src":"https://img.icons8.com/neon/512/spider.png","sizes":"512x512","type":"image/png"}]}'>
+
+  <!-- Fuentes -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
   <style>
     :root {
       --spider-red: #ff0055;
       --spider-blue: #00e5ff;
       --spider-dark: #0b0c10;
-      --spider-card: rgba(18, 22, 36, 0.75);
-      --spider-glass: rgba(255, 255, 255, 0.03);
+      --spider-card: rgba(18, 22, 36, 0.85);
       --font-title: 'Orbitron', sans-serif;
       --font-body: 'Rajdhani', sans-serif;
     }
@@ -34,6 +34,7 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -51,23 +52,25 @@
       overflow-x: hidden;
     }
 
-    /* Malla de Telaraña Neón en Background */
+    /* Malla de Telaraña Neón Animada */
     .web-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0; width: 100vw; height: 100vh;
       background: 
-        radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 70%),
-        radial-gradient(circle at 10% 10%, rgba(255, 0, 85, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 70%),
         repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0, 229, 255, 0.03) 40px, rgba(0, 229, 255, 0.03) 41px),
         repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0, 229, 255, 0.03) 40px, rgba(0, 229, 255, 0.03) 41px);
       pointer-events: none;
       z-index: 1;
+      animation: pulseWeb 8s infinite alternate ease-in-out;
     }
 
-    /* Modales y Contenedores */
+    @keyframes pulseWeb {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(255,0,85,0.2)); }
+    }
+
+    /* Layout Principal */
     .app-container {
       width: 100%;
       max-width: 480px;
@@ -81,28 +84,23 @@
 
     .glass-card {
       background: var(--spider-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(0, 229, 255, 0.2);
       border-radius: 20px;
-      box-shadow: 0 0 25px rgba(255, 0, 85, 0.2), inset 0 0 15px rgba(0, 229, 255, 0.1);
-      padding: 25px;
+      box-shadow: 0 0 25px rgba(255, 0, 85, 0.2);
+      padding: 22px;
       margin-bottom: 20px;
       position: relative;
-      overflow: hidden;
+      animation: floatCard 4s ease-in-out infinite alternate;
     }
 
-    .glass-card::before {
-      content: '';
-      position: absolute;
-      top: -2px; left: -2px; right: -2px; bottom: -2px;
-      background: linear-gradient(45deg, var(--spider-red), transparent, var(--spider-blue));
-      z-index: -1;
-      border-radius: 22px;
-      opacity: 0.3;
+    @keyframes floatCard {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-4px); }
     }
 
-    /* UI Login (PIN Gate) */
+    /* PIN Auth Screen */
     #auth-screen {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -114,55 +112,48 @@
       padding: 20px;
     }
 
-    .auth-box {
-      text-align: center;
-      width: 100%;
-      max-width: 360px;
-    }
-
     .pin-display {
       letter-spacing: 12px;
       font-size: 2rem;
       font-family: var(--font-title);
-      margin: 20px 0;
+      margin: 15px 0;
       color: var(--spider-blue);
-      text-shadow: 0 0 10px var(--spider-blue);
+      text-shadow: 0 0 12px var(--spider-blue);
       border-bottom: 2px solid var(--spider-red);
       padding: 10px;
-      min-height: 60px;
+      min-height: 55px;
     }
 
     .numpad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      gap: 12px;
     }
 
     .num-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(0, 229, 255, 0.3);
       color: #fff;
-      font-size: 1.5rem;
-      padding: 18px;
+      font-size: 1.4rem;
+      padding: 16px;
       border-radius: 12px;
       font-family: var(--font-title);
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      transition: all 0.2s;
+      transition: all 0.15s ease;
     }
 
     .num-btn:active {
       background: var(--spider-red);
-      box-shadow: 0 0 15px var(--spider-red);
-      transform: scale(0.95);
+      box-shadow: 0 0 20px var(--spider-red);
+      transform: scale(0.92);
     }
 
-    /* Modal Frase */
+    /* Modal Frases */
     #quote-modal {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(12px);
       z-index: 998;
       display: none;
       justify-content: center;
@@ -174,12 +165,18 @@
       text-align: center;
       border: 1px solid var(--spider-red);
       box-shadow: 0 0 30px var(--spider-red);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     .quote-text {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-style: italic;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       color: #e0e0e0;
       line-height: 1.4;
     }
@@ -188,8 +185,7 @@
       font-family: var(--font-title);
       color: var(--spider-blue);
       text-shadow: 0 0 8px var(--spider-blue);
-      text-transform: uppercase;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     /* Header & Controles */
@@ -197,7 +193,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .theme-selector {
@@ -206,133 +202,152 @@
     }
 
     .bg-btn {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       border: 2px solid #fff;
       cursor: pointer;
-      box-shadow: 0 0 8px rgba(255,255,255,0.5);
     }
 
-    /* Tabs */
+    /* Navegación por Pestañas */
     .tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 15px;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 12px 5px;
+      padding: 10px 4px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(0, 229, 255, 0.3);
       color: #888;
       font-family: var(--font-title);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       border-radius: 10px;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
       text-align: center;
     }
 
     .tab-btn.active {
       color: #fff;
-      background: rgba(255, 0, 85, 0.2);
+      background: rgba(255, 0, 85, 0.25);
       border-color: var(--spider-red);
-      box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
     }
 
-    /* Forms & Inputs */
+    /* Inputs y Formularios */
     .input-group {
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     input[type="number"] {
       width: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(0, 229, 255, 0.4);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 12px;
       color: #fff;
       font-family: var(--font-title);
       font-size: 1.1rem;
       outline: none;
-      box-shadow: inset 0 0 5px rgba(0, 229, 255, 0.2);
-      transition: border-color 0.3s;
+      transition: all 0.3s ease;
     }
 
     input[type="number"]:focus {
       border-color: var(--spider-red);
-      box-shadow: inset 0 0 8px rgba(255, 0, 85, 0.4), 0 0 8px rgba(255, 0, 85, 0.3);
+      box-shadow: 0 0 12px rgba(255, 0, 85, 0.5);
     }
 
-    .action-btn {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(90deg, var(--spider-red), #b3003b);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      font-family: var(--font-title);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
-      transition: all 0.2s;
-      margin-top: 10px;
-    }
-
-    .action-btn:active {
-      transform: scale(0.98);
-      box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
-    }
-
-    /* Result Display */
+    /* Pantallas de Resultado Interactivas */
     .result-box {
-      margin-top: 20px;
+      margin-top: 15px;
       padding: 15px;
-      background: rgba(0, 229, 255, 0.05);
+      background: rgba(0, 229, 255, 0.06);
       border: 1px solid var(--spider-blue);
-      border-radius: 10px;
+      border-radius: 12px;
       text-align: center;
       box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
-      display: none;
+      transition: all 0.3s ease;
     }
 
     .result-value {
       font-family: var(--font-title);
-      font-size: 1.8rem;
+      font-size: 2rem;
       color: var(--spider-blue);
-      text-shadow: 0 0 10px var(--spider-blue);
-      margin-top: 5px;
+      text-shadow: 0 0 12px var(--spider-blue);
     }
 
     .result-detail {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #aaa;
-      margin-top: 5px;
+      margin-top: 4px;
     }
 
-    /* SVG Spider Logotipos Integrados sin texto */
-    .spider-icon {
-      width: 50px;
-      height: 50px;
-      fill: var(--spider-red);
-      filter: drop-shadow(0 0 6px var(--spider-red));
-    }
-    
-    .spider-icon-blue {
-      width: 40px;
-      height: 40px;
-      fill: var(--spider-blue);
-      filter: drop-shadow(0 0 6px var(--spider-blue));
+    /* UI del Cronómetro */
+    .timer-display {
+      font-family: var(--font-title);
+      font-size: 2.8rem;
+      color: var(--spider-blue);
+      text-shadow: 0 0 20px var(--spider-blue);
+      text-align: center;
+      margin: 15px 0;
+      letter-spacing: 2px;
+      transition: color 0.3s, text-shadow 0.3s;
     }
 
-    .center-icon {
+    .timer-display.warning {
+      color: #ffcc00;
+      text-shadow: 0 0 20px #ffcc00;
+      animation: pulseWarning 1s infinite alternate;
+    }
+
+    .timer-display.negative {
+      color: var(--spider-red);
+      text-shadow: 0 0 25px var(--spider-red);
+      animation: pulseNegative 0.5s infinite alternate;
+    }
+
+    @keyframes pulseWarning { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+    @keyframes pulseNegative { 0% { transform: scale(0.98); } 100% { transform: scale(1.02); } }
+
+    .timer-controls {
       display: flex;
-      justify-content: center;
-      margin-bottom: 15px;
+      gap: 10px;
+      margin-top: 10px;
     }
+
+    .btn-timer {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-title);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-start { background: linear-gradient(90deg, #00e5ff, #0088cc); color: #000; box-shadow: 0 0 10px rgba(0,229,255,0.4); }
+    .btn-pause { background: linear-gradient(90deg, #ffcc00, #ff8800); color: #000; box-shadow: 0 0 10px rgba(255,204,0,0.4); }
+    .btn-reset { background: linear-gradient(90deg, var(--spider-red), #990033); color: #fff; box-shadow: 0 0 10px rgba(255,0,85,0.4); }
+
+    .btn-timer:active { transform: scale(0.95); }
+
+    /* SVG Spider Logotipos */
+    .spider-icon {
+      width: 45px; height: 45px;
+      fill: var(--spider-red);
+      filter: drop-shadow(0 0 8px var(--spider-red));
+    }
+    .spider-icon-blue {
+      width: 35px; height: 35px;
+      fill: var(--spider-blue);
+      filter: drop-shadow(0 0 8px var(--spider-blue));
+    }
+    .center-icon { display: flex; justify-content: center; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -341,7 +356,7 @@
 
   <!-- Pantalla de Login (PIN) -->
   <div id="auth-screen">
-    <div class="glass-card auth-box">
+    <div class="glass-card" style="width:100%; max-width:360px; text-align:center;">
       <div class="center-icon">
         <svg class="spider-icon" viewBox="0 0 24 24">
           <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12C20,13.7 19.47,15.28 18.57,16.57L16.27,13.12C16.73,12.44 17,11.63 17,10.75C17,8.13 14.87,6 12.25,6C11.5,6 10.79,6.17 10.16,6.47L8.43,3.88C9.5,3.32 10.71,3 12,3M12,7.5C13.8,7.5 15.25,8.95 15.25,10.75C15.25,11.5 15,12.18 14.57,12.72L12,8.86L9.43,12.72C9,12.18 8.75,11.5 8.75,10.75C8.75,8.95 10.2,7.5 12,7.5M5.43,7.43L7.16,10.03C6.73,10.71 6.5,11.5 6.5,12.25C6.5,14.87 8.63,17 11.25,17C12,17 12.71,16.83 13.34,16.53L15.07,19.12C14,19.68 12.79,20 11.5,20A8,8 0 0,1 3.5,12C3.5,10.3 4.03,8.72 4.93,7.43M12,14.5A2.25,2.25 0 0,1 9.75,12.25C9.75,11.5 10,10.82 10.43,10.28L12,12.64L13.57,10.28C14,10.82 14.25,11.5 14.25,12.25A2.25,2.25 0 0,1 12,14.5Z"/>
@@ -377,92 +392,102 @@
       </div>
       <div class="quote-text" id="quote-text"></div>
       <div class="quote-author" id="quote-author"></div>
-      <button class="action-btn" style="margin-top:20px;" onclick="closeQuote()">ENTRAR</button>
+      <button class="btn-timer btn-start" style="margin-top:20px; width:100%;" onclick="closeQuote()">ENTRAR</button>
     </div>
   </div>
 
-  <!-- Interfaz Principal App -->
+  <!-- Contenedor Principal de la App -->
   <div class="app-container">
     <header>
-      <!-- Logo sin palabras -->
-      <div style="display:flex; align-items:center; gap:10px;">
-        <svg class="spider-icon" style="width:35px; height:35px;" viewBox="0 0 24 24">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg class="spider-icon" style="width:32px; height:32px;" viewBox="0 0 24 24">
           <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12C20,13.7 19.47,15.28 18.57,16.57L16.27,13.12C16.73,12.44 17,11.63 17,10.75C17,8.13 14.87,6 12.25,6C11.5,6 10.79,6.17 10.16,6.47L8.43,3.88C9.5,3.32 10.71,3 12,3"/>
         </svg>
-        <svg class="spider-icon-blue" style="width:25px; height:25px;" viewBox="0 0 24 24">
+        <svg class="spider-icon-blue" style="width:24px; height:24px;" viewBox="0 0 24 24">
           <path d="M12,2L15,8L21,9L16.5,14L18,20L12,17L6,20L7.5,14L3,9L9,8L12,2Z"/>
         </svg>
       </div>
       
-      <!-- Selector de Fondos -->
       <div class="theme-selector">
-        <div class="bg-btn" style="background: #0d0f17;" onclick="setBg('dark')"></div>
+        <div class="bg-btn" style="background: #0b0c10;" onclick="setBg('dark')"></div>
         <div class="bg-btn" style="background: linear-gradient(135deg, #1f0010, #001122);" onclick="setBg('neon')"></div>
         <div class="bg-btn" style="background: linear-gradient(135deg, #000000, #4a0000);" onclick="setBg('red')"></div>
       </div>
     </header>
 
-    <!-- Navegación por pestañas -->
+    <!-- Menú de Pestañas -->
     <div class="tabs">
-      <div class="tab-btn active" id="tab1-btn" onclick="switchTab(1)">
-        <svg style="width:16px;height:16px;fill:currentColor;vertical-align:middle;" viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"/></svg>
-        100%
-      </div>
-      <div class="tab-btn" id="tab2-btn" onclick="switchTab(2)">
-        <svg style="width:16px;height:16px;fill:currentColor;vertical-align:middle;" viewBox="0 0 24 24"><path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6H16Z"/></svg>
-        % EFICIENCIA
-      </div>
+      <div class="tab-btn active" id="tab1-btn" onclick="switchTab(1)">100%</div>
+      <div class="tab-btn" id="tab2-btn" onclick="switchTab(2)">% EFICIENCIA</div>
+      <div class="tab-btn" id="tab3-btn" onclick="switchTab(3)">CRONÓMETRO</div>
     </div>
 
     <!-- Opción 1: Ritmo 100% -->
     <div id="opt1" class="glass-card">
       <div class="input-group">
-        <input type="number" id="meta1" placeholder="META CARGA">
+        <input type="number" id="meta1" placeholder="META CARGA" oninput="calcOpt1()">
       </div>
       <div class="input-group">
-        <input type="number" id="docenas1" placeholder="DOCENAS HECHAS">
+        <input type="number" id="docenas1" placeholder="DOCENAS HECHAS" oninput="calcOpt1()">
       </div>
-      <button class="action-btn" onclick="calcOpt1()">CALCULAR</button>
-
       <div class="result-box" id="res1">
-        <div class="result-value" id="res1-time">0h 0m</div>
-        <div class="result-detail" id="res1-detail">0 horas exactas</div>
+        <div class="result-value" id="res1-time">0h 00m</div>
+        <div class="result-detail" id="res1-detail">Ingresa datos para calcular</div>
       </div>
     </div>
 
     <!-- Opción 2: Ritmo por Eficiencia -->
     <div id="opt2" class="glass-card" style="display:none;">
       <div class="input-group">
-        <input type="number" id="meta2" placeholder="META CARGA">
+        <input type="number" id="meta2" placeholder="META CARGA" oninput="calcOpt2()">
       </div>
       <div class="input-group">
-        <input type="number" id="docenas2" placeholder="DOCENAS HECHAS">
+        <input type="number" id="docenas2" placeholder="DOCENAS HECHAS" oninput="calcOpt2()">
       </div>
       <div class="input-group">
-        <input type="number" id="ritmo2" placeholder="% RITMO DESEADO (ej. 105, 85)">
+        <input type="number" id="ritmo2" placeholder="% RITMO DESEADO (ej. 105, 85)" oninput="calcOpt2()">
       </div>
-      <button class="action-btn" onclick="calcOpt2()">CALCULAR</button>
-
       <div class="result-box" id="res2">
-        <div class="result-value" id="res2-time">0h 0m</div>
-        <div class="result-detail" id="res2-detail">0 horas exactas</div>
+        <div class="result-value" id="res2-time">0h 00m</div>
+        <div class="result-detail" id="res2-detail">Ingresa datos para calcular</div>
+      </div>
+    </div>
+
+    <!-- Opción 3: Cronómetro Regresivo -->
+    <div id="opt3" class="glass-card" style="display:none;">
+      <div class="input-group">
+        <input type="number" id="meta3" placeholder="META CARGA">
+      </div>
+      <div class="input-group">
+        <input type="number" id="docenas3" placeholder="DOCENAS HECHAS">
+      </div>
+      <div class="input-group">
+        <input type="number" id="ritmo3" placeholder="% RITMO DESEADO (ej. 105, 85)">
+      </div>
+
+      <div class="timer-display" id="timer-display">00:00:00</div>
+
+      <div class="timer-controls">
+        <button class="btn-timer btn-start" onclick="startTimer()">INICIAR</button>
+        <button class="btn-timer btn-pause" onclick="pauseTimer()">PAUSAR</button>
+        <button class="btn-timer btn-reset" onclick="resetTimer()">DETENER</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Registro PWA Service Worker Inline
+    // Registra el Service Worker de la PWA
     if ('serviceWorker' in navigator) {
-      const swContent = `
+      const swCode = `
         self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
       `;
-      const blob = new Blob([swContent], { type: 'application/javascript' });
+      const blob = new Blob([swCode], { type: 'application/javascript' });
       navigator.serviceWorker.register(URL.createObjectURL(blob));
     }
 
-    // Datos Frases
+    // Frases de Spider-Man
     const quotes = [
       { text: "Son las decisiones las que nos hacen ser quienes somos. Y siempre podemos optar por hacer lo correcto.", author: "Spiderman" },
       { text: "Tenemos que ser más grandes que lo que nos hace sufrir.", author: "Spiderman" },
@@ -476,7 +501,7 @@
       { text: "A veces, para hacer lo correcto, tienes que ser firme y renunciar a lo que más deseas. Incluso a tus sueños.", author: "Spiderman" }
     ];
 
-    // Lógica PIN
+    // Control PIN
     let currentPin = "";
     const targetPin = "7550822";
 
@@ -493,8 +518,7 @@
     }
 
     function updatePinDisplay() {
-      const display = document.getElementById("pin-display");
-      display.textContent = "*".repeat(currentPin.length) || "------";
+      document.getElementById("pin-display").textContent = "*".repeat(currentPin.length) || "------";
     }
 
     function checkPin() {
@@ -518,72 +542,170 @@
       document.getElementById("quote-modal").style.display = "none";
     }
 
-    // Navegación Pestañas
+    // Navegación de Pestañas
     function switchTab(tab) {
-      if(tab === 1) {
-        document.getElementById("opt1").style.display = "block";
-        document.getElementById("opt2").style.display = "none";
-        document.getElementById("tab1-btn").classList.add("active");
-        document.getElementById("tab2-btn").classList.remove("active");
-      } else {
-        document.getElementById("opt1").style.display = "none";
-        document.getElementById("opt2").style.display = "block";
-        document.getElementById("tab2-btn").classList.add("active");
-        document.getElementById("tab1-btn").classList.remove("active");
-      }
+      [1, 2, 3].forEach(i => {
+        document.getElementById(`opt${i}`).style.display = (i === tab) ? "block" : "none";
+        document.getElementById(`tab${i}-btn`).classList.toggle("active", i === tab);
+      });
     }
 
-    // Fondos Cambiables
+    // Temas de Fondo
     function setBg(type) {
-      if(type === 'dark') {
+      if (type === 'dark') {
         document.body.style.backgroundImage = 'none';
-        document.body.style.backgroundColor = '#0d0f17';
-      } else if(type === 'neon') {
+        document.body.style.backgroundColor = '#0b0c10';
+      } else if (type === 'neon') {
         document.body.style.backgroundImage = 'radial-gradient(circle at 50% 50%, #1f0010 0%, #001122 100%)';
-      } else if(type === 'red') {
+      } else if (type === 'red') {
         document.body.style.backgroundImage = 'linear-gradient(135deg, #000000 0%, #4a0000 100%)';
       }
     }
 
-    // Cálculo Opción 1: 100%
+    // Cálculos en Tiempo Real
     function calcOpt1() {
       const meta = parseFloat(document.getElementById("meta1").value);
       const docenas = parseFloat(document.getElementById("docenas1").value);
 
-      if(!meta || !docenas) return;
+      if (!meta || !docenas) {
+        document.getElementById("res1-time").textContent = "0h 00m";
+        document.getElementById("res1-detail").textContent = "Ingresa datos para calcular";
+        return;
+      }
 
       const ritmo100 = meta / 11;
       const horasTotales = docenas / ritmo100;
-
       const horasEnteras = Math.floor(horasTotales);
-      const decimales = horasTotales - horasEnteras;
-      const minutos = Math.round(decimales * 60);
+      const minutos = Math.round((horasTotales - horasEnteras) * 60);
 
-      document.getElementById("res1-time").textContent = `${horasEnteras}h ${minutos}m`;
-      document.getElementById("res1-detail").textContent = `${horasTotales.toFixed(3)} horas (Ritmo 100%)`;
-      document.getElementById("res1").style.display = "block";
+      document.getElementById("res1-time").textContent = `${horasEnteras}h ${minutos < 10 ? '0' : ''}${minutos}m`;
+      document.getElementById("res1-detail").textContent = `${horasTotales.toFixed(3)} horas (100% Ritmo)`;
     }
 
-    // Cálculo Opción 2: Ritmo por % Eficiencia
     function calcOpt2() {
       const meta = parseFloat(document.getElementById("meta2").value);
       const docenas = parseFloat(document.getElementById("docenas2").value);
       const ritmoInput = parseFloat(document.getElementById("ritmo2").value);
 
-      if(!meta || !docenas || !ritmoInput) return;
+      if (!meta || !docenas || !ritmoInput) {
+        document.getElementById("res2-time").textContent = "0h 00m";
+        document.getElementById("res2-detail").textContent = "Ingresa datos para calcular";
+        return;
+      }
 
       const factorRitmo = ritmoInput / 100;
       const ritmo100 = meta / 11;
-      
       const horasTotales = (docenas / ritmo100) / factorRitmo;
-
       const horasEnteras = Math.floor(horasTotales);
-      const decimales = horasTotales - horasEnteras;
-      const minutos = Math.round(decimales * 60);
+      const minutos = Math.round((horasTotales - horasEnteras) * 60);
 
-      document.getElementById("res2-time").textContent = `${horasEnteras}h ${minutos}m`;
+      document.getElementById("res2-time").textContent = `${horasEnteras}h ${minutos < 10 ? '0' : ''}${minutos}m`;
       document.getElementById("res2-detail").textContent = `${horasTotales.toFixed(3)} horas al ${ritmoInput}%`;
-      document.getElementById("res2").style.display = "block";
+    }
+
+    // Cronómetro Regresivo Completo
+    let timerInterval = null;
+    let totalSeconds = 0;
+    let alertSoundPlayed = false;
+    let isVibrating = false;
+
+    // Generador de audio Spider-Man mediante Synthesizer Web Audio API
+    function playSpiderTone() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime + i * 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(audioCtx.currentTime + i * 0.15);
+          osc.stop(audioCtx.currentTime + i * 0.15 + 0.3);
+        });
+      } catch (e) {
+        console.log("Audio no disponible");
+      }
+    }
+
+    function startTimer() {
+      if (timerInterval) return;
+
+      if (totalSeconds === 0) {
+        const meta = parseFloat(document.getElementById("meta3").value);
+        const docenas = parseFloat(document.getElementById("docenas3").value);
+        const ritmoInput = parseFloat(document.getElementById("ritmo3").value);
+
+        if (!meta || !docenas || !ritmoInput) {
+          alert("Ingresa Meta, Docenas y Ritmo % para iniciar el cronómetro.");
+          return;
+        }
+
+        const factorRitmo = ritmoInput / 100;
+        const ritmo100 = meta / 11;
+        const horasTotales = (docenas / ritmo100) / factorRitmo;
+        totalSeconds = Math.round(horasTotales * 3600);
+      }
+
+      alertSoundPlayed = false;
+
+      timerInterval = setInterval(() => {
+        totalSeconds--;
+
+        updateTimerUI();
+
+        // Alerta sonora cuando queden 5 minutos (300 segundos)
+        if (totalSeconds === 300 && !alertSoundPlayed) {
+          playSpiderTone();
+          alertSoundPlayed = true;
+        }
+
+        // Al llegar a 0 o menor: vibración persistente
+        if (totalSeconds <= 0) {
+          if ('vibrate' in navigator) {
+            navigator.vibrate([400, 200, 400]);
+          }
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      if ('vibrate' in navigator) navigator.vibrate(0);
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      totalSeconds = 0;
+      alertSoundPlayed = false;
+      const display = document.getElementById("timer-display");
+      display.textContent = "00:00:00";
+      display.className = "timer-display";
+    }
+
+    function updateTimerUI() {
+      const display = document.getElementById("timer-display");
+      const isNegative = totalSeconds < 0;
+      const absSecs = Math.abs(totalSeconds);
+
+      const h = Math.floor(absSecs / 3600);
+      const m = Math.floor((absSecs % 3600) / 60);
+      const s = absSecs % 60;
+
+      const format = `${isNegative ? '-' : ''}${h < 10 ? '0' : ''}${h}:${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+      display.textContent = format;
+
+      if (isNegative) {
+        display.className = "timer-display negative";
+      } else if (totalSeconds <= 300) {
+        display.className = "timer-display warning";
+      } else {
+        display.className = "timer-display";
+      }
     }
   </script>
 </body>
